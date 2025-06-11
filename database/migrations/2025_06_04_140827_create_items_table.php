@@ -12,15 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('items', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('code')->unique();
-            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
-            $table->foreignId('unit_id')->constrained('units')->onDelete('cascade');
-            $table->text('description')->nullable();
-            $table->integer('stock')->default(0);
-            $table->timestamps();
-        });
+    $table->id();
+    $table->string('name');
+    $table->string('code')->unique();
+    $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
+    $table->string('unit'); // Ganti foreign key jadi kolom string
+    $table->text('description')->nullable();
+    $table->integer('stock')->default(0);
+    $table->integer('minimum_stock')->default(0);
+    $table->timestamps();
+});
     }
 
     /**

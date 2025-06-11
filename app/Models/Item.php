@@ -2,17 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Item extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'code',
         'category_id',
-        'unit_id',
         'description',
         'stock',
+        'unit', 
     ];
 
     public function category()
@@ -20,8 +23,13 @@ class Item extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function unit()
+    public function stockIns()
     {
-        return $this->belongsTo(Unit::class);
+        return $this->hasMany(StockIn::class);
+    }
+
+    public function stockOuts()
+    {
+        return $this->hasMany(StockOut::class);
     }
 }

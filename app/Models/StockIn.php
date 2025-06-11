@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class StockIn extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'date',
         'item_id',
@@ -19,7 +22,7 @@ class StockIn extends Model
     {
         return $this->belongsTo(Item::class);
     }
-    
+
     public function user()
     {
         return $this->belongsTo(User::class);
