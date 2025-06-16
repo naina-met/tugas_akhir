@@ -31,7 +31,16 @@
                     <x-nav-link :href="route('stock-outs.index')" :active="request()->routeIs('stock-outs.*')">
                         {{ __('Stock Out') }}
                     </x-nav-link>
+
+                    @if (Auth::user()->role === 'Superadmin')
+    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+        {{ __('User Management') }}
+    </x-nav-link>
+@endif
                 </div>
+
+                
+
             </div>
 
             <!-- Settings Dropdown -->

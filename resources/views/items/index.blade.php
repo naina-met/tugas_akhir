@@ -13,6 +13,13 @@
                 {{ session('success') }}
             </div>
         @endif
+            <a href="{{ route('export.items') }}" class="bg-green-500 text-white px-4 py-2 rounded" onclick="return confirmExport();">Export Excel</a>
+            <script>
+    function confirmExport() {
+        return confirm('Apakah Anda yakin mau mengekspor dalam bentuk Excel?');
+    }
+</script>
+
 
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
             <table class="min-w-full divide-y divide-gray-200">

@@ -22,26 +22,33 @@ class StockInController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'date' => 'required|date',
-            'item_id' => 'required|exists:items,id',
-            'quantity' => 'required|integer|min:1',
-            'incoming_source' => 'required|in:Pembelian,Retur',
-            'description' => 'nullable',
-        ]);
+{
+    $request->validate([
+        'date' => 'required|date',
+        'item_id' => 'required|exists:items,id',
+        'quantity' => 'required|integer|min:1',
+        'incoming_source' => 'required|in:Pembelian,Retur',
+        'description' => 'nullable',
+    ]);
 
-        StockIn::create([
-            'date' => $request->date,
-            'item_id' => $request->item_id,
-            'quantity' => $request->quantity,
-            'incoming_source' => $request->incoming_source,
-            'description' => $request->description,
-            'user_id' => Auth::id(),
-        ]);
+    // Buat stock in baru
+    $stockIn = StockIn::create([
+        'date' => $request->date,
+        'item_id' => $request->item_id,
+        'quantity' => $request->quantity,
+        'incoming_source' => $request->incoming_source,
+        'description' => $request->description,
+        'user_id' => Auth::id(),
+    ]);
 
-        return redirect()->route('stock-ins.index')->with('success', 'Stock in added successfully.');
-    }
+    // Tambahkan stok pada item terkait
+    $item = Item::find($request->item_id);
+    $item->stock += $request->quantity;
+    $item->save();
+
+    return redirect()->route('stock-ins.index')->with('success', 'Stock in added successfully.');
+}
+
 
     public function edit(StockIn $stockIn)
     {
@@ -50,23 +57,47 @@ class StockInController extends Controller
     }
 
     public function update(Request $request, StockIn $stockIn)
-    {
-        $request->validate([
-            'date' => 'required|date',
-            'item_id' => 'required|exists:items,id',
-            'quantity' => 'required|integer|min:1',
-            'incoming_source' => 'required|in:Pembelian,Retur',
-            'description' => 'nullable',
-        ]);
+{
+    $request->validate([
+        'date' => 'required|date',
+        'item_id' => 'required|exists:items,id',
+        'quantity' => 'required|integer|min:1',
+        'incoming_source' => 'required|in:Pembelian,Retur',
+        'description' => 'nullable',
+    ]);
 
-        $stockIn->update($request->all());
+    // Ambil item lama
+    $oldItem = Item::find($stockIn->item_id);
+    // Kembalikan stok lama
+    $oldItem->stock -= $stockIn->quantity;
+    $oldItem->save();
 
-        return redirect()->route('stock-ins.index')->with('success', 'Stock in updated successfully.');
-    }
+    // Update stockIn
+    $stockIn->update($request->all());
+
+    // Ambil item baru (bisa jadi item-nya diganti)
+    $newItem = Item::find($request->item_id);
+    // Tambahkan stok baru
+    $newItem->stock += $request->quantity;
+    $newItem->save();
+
+    return redirect()->route('stock-ins.index')->with('success', 'Stock in updated successfully.');
+}
+
 
     public function destroy(StockIn $stockIn)
-    {
-        $stockIn->delete();
-        return redirect()->route('stock-ins.index')->with('success', 'Stock in deleted successfully.');
-    }
+{
+    // Ambil item yang berkaitan
+    $item = Item::find($stockIn->item_id);
+
+    // Kurangi stok item sesuai quantity yang dihapus
+    $item->stock -= $stockIn->quantity;
+    $item->save();
+
+    // Hapus stock in
+    $stockIn->delete();
+
+    return redirect()->route('stock-ins.index')->with('success', 'Stock in deleted successfully.');
+}
+
 }

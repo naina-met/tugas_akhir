@@ -13,6 +13,11 @@
                 {{ session('success') }}
             </div>
         @endif
+        <a href="{{ route('export.stockins') }}" class="bg-green-500 text-white px-4 py-2 rounded mb-4 inline-block" onclick="return confirm('Apakah anda yakin ingin mengekspor Stock In ke Excel?')">
+    Export Excel
+</a>
+
+
 
         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
             <table class="min-w-full divide-y divide-gray-200">
