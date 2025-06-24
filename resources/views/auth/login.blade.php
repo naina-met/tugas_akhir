@@ -3,7 +3,7 @@
 
         <!-- Welcome Box -->
         <div class="welcome-box animate-fade-in-up">
-            <h1 class="welcome-title">Selamat Datang 👋</h1>
+            <h1 class="welcome-title">Login</h1>
         </div>
 
         <!-- Login Box -->
