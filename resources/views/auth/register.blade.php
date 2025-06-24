@@ -3,7 +3,7 @@
 
         <!-- Welcome Box -->
         <div class="welcome-box animate-fade-in-up">
-            <h1 class="welcome-title">Register Akun ✨</h1>
+            <h1 class="welcome-title">Register Akun</h1>
         </div>
 
         <!-- Register Box -->
