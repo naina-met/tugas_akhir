@@ -18,77 +18,71 @@
 
     <!-- Content -->
     <div class="min-h-screen bg-[#002147] py-10">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
-            <!-- Page Title -->
-            <div class="mb-6">
-                <h2 class="text-3xl font-bold text-white">
-                    Edit Stock In
-                </h2>
-            </div>
+            <!-- Title -->
+            <h2 class="text-2xl font-semibold text-white mb-6">Edit Stock In</h2>
 
-            <!-- Form Center -->
-            <div class="flex justify-center">
-                <div class="bg-white shadow rounded-lg border-2 border-[#002147] p-8 w-full max-w-2xl">
-                    <form action="{{ route('stock-ins.update', $stockIn) }}" method="POST" class="space-y-5">
-                        @csrf
-                        @method('PUT')
-
-                        <!-- Date -->
-                        <div>
-                            <label class="block text-[#002147] font-medium mb-1">Date</label>
-                            <input type="date" name="date" value="{{ $stockIn->date }}" required
-                                   class="w-full border-2 border-[#002147] rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff5c10]">
-                        </div>
-
-                        <!-- Item -->
-                        <div>
-                            <label class="block text-[#002147] font-medium mb-1">Item</label>
-                            <select name="item_id" required
-                                    class="w-full border-2 border-[#002147] rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff5c10]">
-                                @foreach ($items as $item)
-                                    <option value="{{ $item->id }}" {{ $item->id == $stockIn->item_id ? 'selected' : '' }}>
-                                        {{ $item->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Quantity -->
-                        <div>
-                            <label class="block text-[#002147] font-medium mb-1">Quantity</label>
-                            <input type="number" name="quantity" value="{{ $stockIn->quantity }}" required
-                                   class="w-full border-2 border-[#002147] rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff5c10]">
-                        </div>
-
-                        <!-- Source -->
-                        <div>
-                            <label class="block text-[#002147] font-medium mb-1">Source</label>
-                            <select name="incoming_source" required
-                                    class="w-full border-2 border-[#002147] rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff5c10]">
-                                <option value="Pembelian" {{ $stockIn->incoming_source == 'Pembelian' ? 'selected' : '' }}>Pembelian</option>
-                                <option value="Retur" {{ $stockIn->incoming_source == 'Retur' ? 'selected' : '' }}>Retur</option>
-                            </select>
-                        </div>
-
-                        <!-- Description -->
-                        <div>
-                            <label class="block text-[#002147] font-medium mb-1">Description</label>
-                            <textarea name="description" rows="3"
-                                      class="w-full border-2 border-[#002147] rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#ff5c10]">{{ $stockIn->description }}</textarea>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="flex justify-end">
-                            <button type="submit" class="bg-[#ff5c10] hover:bg-[#a6240d] text-white px-6 py-2 rounded shadow transition">
-                                Update
-                            </button>
-                        </div>
-
-                    </form>
+            <!-- Error Alert -->
+            @if ($errors->any())
+                <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
+                    <ul class="list-disc pl-5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
-            </div>
+            @endif
 
+            <!-- Form -->
+            <form action="{{ route('stock-ins.update', $stockIn) }}" method="POST" class="bg-white p-8 rounded shadow border-2 border-[#002147] space-y-5">
+                @csrf
+                @method('PUT')
+
+                <div>
+                    <label class="block text-sm font-medium text-[#002147] mb-1">Date</label>
+                    <input type="date" name="date" value="{{ $stockIn->date }}" class="w-full border rounded px-3 py-2" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-[#002147] mb-1">Item</label>
+                    <select name="item_id" class="w-full border rounded px-3 py-2" required>
+                        @foreach ($items as $item)
+                            <option value="{{ $item->id }}" {{ $item->id == $stockIn->item_id ? 'selected' : '' }}>
+                                {{ $item->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-[#002147] mb-1">Quantity</label>
+                    <input type="number" name="quantity" value="{{ $stockIn->quantity }}" class="w-full border rounded px-3 py-2" required>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-[#002147] mb-1">Source</label>
+                    <select name="incoming_source" class="w-full border rounded px-3 py-2" required>
+                        <option value="Pembelian" {{ $stockIn->incoming_source == 'Pembelian' ? 'selected' : '' }}>Pembelian</option>
+                        <option value="Retur" {{ $stockIn->incoming_source == 'Retur' ? 'selected' : '' }}>Retur</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-[#002147] mb-1">Description</label>
+                    <textarea name="description" class="w-full border rounded px-3 py-2">{{ $stockIn->description }}</textarea>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-4">
+                    <button type="submit" class="bg-[#ff5c10] hover:bg-[#a6240d] text-white px-6 py-2 rounded shadow transition">
+                        Update
+                    </button>
+                    <a href="{{ route('stock-ins.index') }}" class="bg-gray-400 hover:bg-gray-500 text-white px-6 py-2 rounded shadow transition">
+                        Cancel
+                    </a>
+                </div>
+            </form>
         </div>
     </div>
 </x-app-layout>

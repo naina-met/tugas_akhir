@@ -1,47 +1,80 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Manage Admin Accounts') }}
-        </h2>
-    </x-slot>
+    <!-- Navbar -->
+    <nav class="bg-[#f5f7f7] text-white shadow mb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+            <!-- Logo -->
+            <div class="flex items-center space-x-4">
+                <a href="{{ route('dashboard') }}">
+                    <img src="/forpic.img/logocm.png" alt="Logo" class="h-20">
+                </a>
+            </div>
 
-    <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <a href="{{ route('users.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded mb-4 inline-block">Add Admin</a>
+            <!-- User -->
+            <div class="text-sm text-[#002147] font-semibold">
+                {{ Auth::user()->name }}
+            </div>
+        </div>
+    </nav>
 
-        @if (session('success'))
-            <div class="mb-4 text-green-600">{{ session('success') }}</div>
-        @endif
+    <!-- Content -->
+    <div class="min-h-screen bg-[#002147] py-10">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Header + Add Button -->
+            <div class="mb-6 flex justify-between items-center">
+                <h2 class="text-3xl font-semibold text-white">Manage Admin Accounts</h2>
+                <a href="{{ route('users.create') }}" class="bg-[#ff5c10] text-white px-5 py-2 rounded shadow hover:bg-[#a6240d] transition">
+                    + Add Admin
+                </a>
+            </div>
 
-        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead>
-                    <tr>
-                        <th class="px-6 py-3">Username</th>
-                        <th class="px-6 py-3">Email</th>
-                        <th class="px-6 py-3">Status</th>
-                        <th class="px-6 py-3">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    @foreach ($users as $user)
+            @if (session('success'))
+                <div class="mb-4 text-green-500 font-medium">{{ session('success') }}</div>
+            @endif
+
+            <!-- Table -->
+            <div class="bg-white shadow rounded-lg border-2 border-[#002147] overflow-x-auto">
+                <table class="w-full text-left border-collapse border-b-2 border-[#002147]">
+                    <thead class="bg-[#ff5c10] text-white border-b-2 border-[#002147]">
                         <tr>
-                            <td class="px-6 py-4">{{ $user->username }}</td>
-                            <td class="px-6 py-4">{{ $user->email }}</td>
-                            <td class="px-6 py-4">{{ $user->status ? 'Active' : 'Inactive' }}</td>
-                            <td class="px-6 py-4">
-                                <a href="{{ route('users.edit', $user) }}" class="text-blue-500 mr-2">Edit</a>
-                                <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500">Delete</button>
-                                </form>
-                            </td>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">#</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Username</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Email</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Status</th>
+                            <th class="px-6 py-3 text-sm font-semibold">Actions</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="text-[#002147]">
+                        @forelse ($users as $index => $user)
+                            <tr class="border-t-2 border-[#002147] hover:bg-[#f0f4f8] transition">
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $index + 1 }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $user->username }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $user->email }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">
+                                    {{ $user->status ? 'Active' : 'Inactive' }}
+                                </td>
+                                <td class="px-6 py-4 flex gap-2">
+                                    <a href="{{ route('users.edit', $user) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">Edit</a>
+                                    <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center px-6 py-8 text-gray-500">No admin users found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
 
-            <div class="p-4">{{ $users->links() }}</div>
+                @if ($users->hasPages())
+                    <div class="border-t-2 border-[#002147] px-6 py-4">
+                        {{ $users->links() }}
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 </x-app-layout>
