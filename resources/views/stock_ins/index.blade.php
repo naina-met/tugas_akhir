@@ -1,60 +1,95 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Stock Ins') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <a href="{{ route('stock-ins.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded mb-4 inline-block">Add Stock In</a>
-
-        @if (session('success'))
-            <div class="mb-4 text-green-600">
-                {{ session('success') }}
+    <!-- Navbar -->
+    <nav class="bg-[#f5f7f7] text-white shadow mb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+            <!-- Logo -->
+            <div class="flex items-center space-x-4">
+                <a href="{{ route('dashboard') }}">
+                    <img src="/forpic.img/logocm.png" alt="Logo" class="h-20">
+                </a>
             </div>
-        @endif
-        <a href="{{ route('export.stockins') }}" class="bg-green-500 text-white px-4 py-2 rounded mb-4 inline-block" onclick="return confirm('Apakah anda yakin ingin mengekspor Stock In ke Excel?')">
-    Export Excel
-</a>
 
+            <!-- User -->
+            <div class="text-sm text-[#002147] font-semibold">
+                {{ Auth::user()->name }}
+            </div>
+        </div>
+    </nav>
 
+    <!-- Content -->
+    <div class="min-h-screen bg-[#002147] py-10">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Header Button -->
+            <div class="mb-6">
+                <a href="{{ route('stock-ins.create') }}" class="bg-[#ff5c10] text-white px-5 py-2 rounded shadow hover:bg-[#a6240d] transition">
+                    + Add Stock In
+                </a>
+                <a href="{{ route('export.stockins') }}" class="bg-green-600 text-white px-5 py-2 rounded shadow hover:bg-green-700 ml-2 transition" onclick="return confirmExport();">
+                    Export Excel
+                </a>
+            </div>
 
-        <div class="bg-white shadow overflow-hidden sm:rounded-lg">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead>
-                    <tr>
-                        <th class="px-6 py-3">Date</th>
-                        <th class="px-6 py-3">Item</th>
-                        <th class="px-6 py-3">Quantity</th>
-                        <th class="px-6 py-3">Source</th>
-                        <th class="px-6 py-3">User</th>
-                        <th class="px-6 py-3">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    @foreach ($stockIns as $stockIn)
+            @if (session('success'))
+                <div class="mb-4 text-green-500 font-medium">{{ session('success') }}</div>
+            @endif
+
+            <!-- Table -->
+            <div class="bg-white shadow rounded-lg border-2 border-[#002147]">
+                <table class="w-full text-left border-collapse border-b-2 border-[#002147]">
+                    <thead class="bg-[#ff5c10] text-white border-b-2 border-[#002147]">
                         <tr>
-                            <td class="px-6 py-4">{{ $stockIn->date }}</td>
-                            <td class="px-6 py-4">{{ $stockIn->item->name }}</td>
-                            <td class="px-6 py-4">{{ $stockIn->quantity }}</td>
-                            <td class="px-6 py-4">{{ $stockIn->incoming_source }}</td>
-                            <td class="px-6 py-4">{{ $stockIn->user->username }}</td>
-                            <td class="px-6 py-4">
-                                <a href="{{ route('stock-ins.edit', $stockIn) }}" class="text-blue-500 mr-2">Edit</a>
-                                <form action="{{ route('stock-ins.destroy', $stockIn) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500">Delete</button>
-                                </form>
-                            </td>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">#</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Date</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Item</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Quantity</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Source</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">User</th>
+                            <th class="px-6 py-3 text-sm font-semibold">Actions</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="text-[#002147]">
+                        @forelse ($stockIns as $index => $stockIn)
+                            <tr class="border-t-2 border-[#002147] hover:bg-[#f0f4f8] transition">
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $index + 1 }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $stockIn->date }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $stockIn->item->name }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $stockIn->quantity }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $stockIn->incoming_source }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $stockIn->user->username }}</td>
+                                <td class="px-6 py-4 flex gap-2">
+                                    <a href="{{ route('stock-ins.edit', $stockIn) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">Edit</a>
+                                    <form action="{{ route('stock-ins.destroy', $stockIn) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center px-6 py-8 text-gray-500">No stock-in records found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
 
-            <div class="p-4">
+                @if ($stockIns->hasPages())
+                    <div class="border-t-2 border-[#002147] px-6 py-4">
+                        {{ $stockIns->links() }}
+                    </div>
+                @endif
+            </div>
+
+            <div class="mt-6 px-6 pb-6">
                 {{ $stockIns->links() }}
             </div>
         </div>
     </div>
+
+    <!-- Confirm Export Script -->
+    <script>
+        function confirmExport() {
+            return confirm('Apakah Anda yakin mau mengekspor dalam bentuk Excel?');
+        }
+    </script>
 </x-app-layout>

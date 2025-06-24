@@ -1,47 +1,62 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="min-h-screen flex flex-col justify-start items-center bg-gradient-to-b from-[#ff5c10] to-[#002147] pt-16 px-4 md:px-8 relative overflow-hidden">
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <!-- Welcome Box -->
+        <div class="welcome-box animate-fade-in-up">
+            <h1 class="welcome-title">Selamat Datang 👋</h1>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <!-- Login Box -->
+        <div class="login-box animate-fade-in-up delay-150">
+            <x-auth-session-status class="mb-4" :status="session('status')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                <!-- Email -->
+                <div class="mb-5">
+                    <x-input-label for="email" :value="('Email')" />
+                    <x-text-input id="email" class="block mt-2 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                </div>
+
+                <!-- Password -->
+                <div class="mb-5">
+                    <x-input-label for="password" :value="('Password')" />
+                    <x-text-input id="password" class="block mt-2 w-full" type="password" name="password" required autocomplete="current-password" />
+                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                </div>
+
+                <!-- Remember Me -->
+                <div class="flex items-center mb-6">
+                    <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
+                    <label for="remember_me" class="ml-2 text-sm text-gray-600">Remember me</label>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    @if (Route::has('password.request'))
+                        <a class="text-sm text-orange-500 hover:text-orange-700 transition-colors duration-300" href="{{ route('password.request') }}">
+                            Forgot your password?
+                        </a>
+                    @endif
+
+                    <button type="submit" class="login-button">
+                        Log in
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
+       <!-- Stickman Left -->
+<div class="absolute bottom-8 left-4 animate-stickman-left z-10">
+    <img src="{{ asset('forpic.img/rena_bluberi.png') }}" alt="stickman left" class="w-12 md:w-14">
+</div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+<!-- Stickman Right -->
+<div class="absolute bottom-8 right-4 animate-stickman-right z-10">
+    <img src="{{ asset('forpic.img/naina_stoberi.png') }}" alt="stickman right" class="w-12 md:w-14">
+</div>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
+    </div>
 </x-guest-layout>
