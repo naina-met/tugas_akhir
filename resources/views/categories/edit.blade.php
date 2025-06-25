@@ -2,13 +2,6 @@
     <!-- Navbar -->
     <nav class="bg-[#f5f7f7] text-white shadow-md mb-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <!-- Logo -->
-            <div class="flex items-center space-x-4">
-                <a href="{{ route('dashboard') }}">
-                    <img src="/forpic.img/logocm.png" alt="Logo" class="h-20">
-                </a>
-            </div>
-
             <!-- User -->
             <div class="text-sm text-[#002147] font-semibold">
                 {{ Auth::user()->name }}
@@ -22,7 +15,8 @@
             <h2 class="text-2xl text-white font-bold mb-6">Edit Category</h2>
 
             <!-- Form -->
-            <form action="{{ route('categories.update', $category) }}" method="POST" class="bg-white text-[#002147] shadow-lg rounded-lg p-8 space-y-6 border-2 border-[#002147]">
+            <form id="editCategoryForm" action="{{ route('categories.update', $category) }}" method="POST"
+                  class="bg-white text-[#002147] shadow-lg rounded-lg p-8 space-y-6 border-2 border-[#002147]">
                 @csrf
                 @method('PUT')
 
@@ -46,7 +40,7 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <button type="submit"
+                    <button id="submitBtn" type="submit"
                             class="bg-[#ff5c10] text-white px-6 py-2 rounded shadow hover:bg-[#a6240d] transition">
                         Update
                     </button>
@@ -54,4 +48,13 @@
             </form>
         </div>
     </div>
+
+    <!-- Disable Submit Button Script -->
+    <script>
+        document.getElementById('editCategoryForm').addEventListener('submit', function () {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'Updating...'; // Opsional: ganti teks
+        });
+    </script>
 </x-app-layout>

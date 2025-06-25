@@ -13,7 +13,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form id="profileForm" method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
         @csrf
         @method('patch')
 
@@ -48,7 +48,7 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <x-primary-button id="saveBtn">{{ __('Save') }}</x-primary-button>
 
             @if (session('status') === 'profile-updated')
                 <p
@@ -61,4 +61,16 @@
             @endif
         </div>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('profileForm');
+            const submitBtn = document.getElementById('saveBtn');
+
+            form.addEventListener('submit', function () {
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Saving...';
+            });
+        });
+    </script>
 </section>

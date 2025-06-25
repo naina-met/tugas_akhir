@@ -2,12 +2,6 @@
     <!-- Navbar -->
     <nav class="bg-[#f5f7f7] text-white shadow mb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <!-- Logo -->
-            <div class="flex items-center space-x-4">
-                <a href="{{ route('dashboard') }}">
-                    <img src="/forpic.img/logocm.png" alt="Logo" class="h-20">
-                </a>
-            </div>
 
             <!-- User -->
             <div class="text-sm text-[#002147] font-semibold">
@@ -28,9 +22,9 @@
                 <div class="mb-4 text-green-500 font-medium">{{ session('success') }}</div>
             @endif
 
-           <div class="bg-white shadow rounded-lg border-2 border-[#002147]">
-    <table class="w-full text-left border-collapse border-b-2 border-[#002147]">
-        <thead class="bg-[#ff5c10] text-white border-b-2 border-[#002147]">
+           <div class="bg-white shadow rounded-lg border-2 border-[#002147] overflow-hidden">
+    <table class="w-full text-left border-collapse border-spacing-0">
+        <thead class="bg-[#ff5c10] text-white">
             <tr>
                 <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">#</th>
                 <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Name</th>
@@ -38,7 +32,7 @@
                 <th class="px-6 py-3 text-sm font-semibold">Actions</th>
             </tr>
         </thead>
-        <tbody class="text-[#002147]">
+        <tbody class="text [#002147]">
             @forelse ($categories as $category)
                 <tr class="border-t-2 border-[#002147] hover:bg-[#f0f4f8] transition">
                     <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $loop->iteration }}</td>

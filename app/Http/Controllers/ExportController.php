@@ -7,116 +7,146 @@ use App\Models\StockIn;
 use App\Models\StockOut;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class ExportController extends Controller
 {
-    // Export untuk Item
+    private function styleSheet($sheet, $lastColumn, $lastRow)
+    {
+        // Style untuk judul besar (baris 1)
+        $sheet->mergeCells("A1:{$lastColumn}1");
+        $sheet->getStyle("A1")->applyFromArray([
+            'font' => ['bold' => true, 'size' => 14],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+        $sheet->getRowDimension(1)->setRowHeight(30);
+
+        // Style untuk header tabel (baris 2)
+        $sheet->getStyle("A2:{$lastColumn}2")->applyFromArray([
+            'font' => ['bold' => true],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'f3f3f3'],
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+        ]);
+
+        // Style untuk data (mulai baris 3)
+        $sheet->getStyle("A3:{$lastColumn}{$lastRow}")->applyFromArray([
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+        ]);
+
+        // Set lebar kolom manual agar tidak sempit
+        $columnWidths = [
+            'A' => 20,
+            'B' => 25,
+            'C' => 25,
+            'D' => 20,
+            'E' => 20,
+        ];
+
+        foreach ($columnWidths as $col => $width) {
+            if (ord($col) <= ord($lastColumn)) {
+                $sheet->getColumnDimension($col)->setWidth($width);
+            }
+        }
+
+        // Tinggi baris header
+        $sheet->getRowDimension(2)->setRowHeight(25);
+    }
+
+    private function downloadSheet(Spreadsheet $spreadsheet, $filename)
+    {
+        $writer = new Xlsx($spreadsheet);
+        $filePath = storage_path("app/public/{$filename}");
+        $writer->save($filePath);
+        return response()->download($filePath)->deleteFileAfterSend(true);
+    }
+
     public function exportItems()
     {
         $items = Item::with('category')->get();
-
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Set Header
-        $sheet->setCellValue('A1', 'Name');
-        $sheet->setCellValue('B1', 'Code');
-        $sheet->setCellValue('C1', 'Category');
-        $sheet->setCellValue('D1', 'Stock');
-        $sheet->setCellValue('E1', 'Unit');
+        // Judul
+        $sheet->setCellValue('A1', 'ITEMS LIST');
 
-        // Isi Data
-        $row = 2;
+        // Header tabel
+        $sheet->fromArray(['Name', 'Code', 'Category', 'Stock', 'Unit'], null, 'A2');
+
+        $row = 3;
         foreach ($items as $item) {
-            $sheet->setCellValue('A' . $row, $item->name);
-            $sheet->setCellValue('B' . $row, $item->code);
-            $sheet->setCellValue('C' . $row, $item->category->name);
-            $sheet->setCellValue('D' . $row, $item->stock);
-            $sheet->setCellValue('E' . $row, $item->unit);
+            $sheet->setCellValue("A{$row}", $item->name);
+            $sheet->setCellValue("B{$row}", $item->code);
+            $sheet->setCellValue("C{$row}", $item->category->name);
+            $sheet->setCellValue("D{$row}", $item->stock);
+            $sheet->setCellValue("E{$row}", $item->unit);
             $row++;
         }
 
-        $writer = new Xlsx($spreadsheet);
-        $fileName = 'items.xlsx';
-
-        // Simpan file sementara
-        $filePath = storage_path('app/public/' . $fileName);
-        $writer->save($filePath);
-
-        // Download dan hapus setelah terkirim
-        return response()->download($filePath)->deleteFileAfterSend(true);
+        $this->styleSheet($sheet, 'E', $row - 1);
+        return $this->downloadSheet($spreadsheet, 'items.xlsx');
     }
 
-    // Export untuk Stock Ins
     public function exportStockIns()
     {
         $stockIns = StockIn::with('item', 'user')->get();
-
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        // Set Header
-        $sheet->setCellValue('A1', 'Date');
-        $sheet->setCellValue('B1', 'Item');
-        $sheet->setCellValue('C1', 'Quantity');
-        $sheet->setCellValue('D1', 'Source');
-        $sheet->setCellValue('E1', 'User');
+        $sheet->setCellValue('A1', 'STOCK IN LIST');
+        $sheet->fromArray(['Date', 'Item', 'Quantity', 'Source', 'User'], null, 'A2');
 
-        // Isi Data
-        $row = 2;
+        $row = 3;
         foreach ($stockIns as $stockIn) {
-            $sheet->setCellValue('A' . $row, $stockIn->date);
-            $sheet->setCellValue('B' . $row, $stockIn->item->name);
-            $sheet->setCellValue('C' . $row, $stockIn->quantity);
-            $sheet->setCellValue('D' . $row, $stockIn->incoming_source);
-            $sheet->setCellValue('E' . $row, $stockIn->user->username);
+            $sheet->setCellValue("A{$row}", $stockIn->date);
+            $sheet->setCellValue("B{$row}", $stockIn->item->name);
+            $sheet->setCellValue("C{$row}", $stockIn->quantity);
+            $sheet->setCellValue("D{$row}", $stockIn->incoming_source);
+            $sheet->setCellValue("E{$row}", $stockIn->user->username);
             $row++;
         }
 
-        $writer = new Xlsx($spreadsheet);
-        $fileName = 'stock_ins.xlsx';
-
-        // Simpan file sementara
-        $filePath = storage_path('app/public/' . $fileName);
-        $writer->save($filePath);
-
-        // Download dan hapus setelah terkirim
-        return response()->download($filePath)->deleteFileAfterSend(true);
+        $this->styleSheet($sheet, 'E', $row - 1);
+        return $this->downloadSheet($spreadsheet, 'stock_ins.xlsx');
     }
 
     public function exportStockOuts()
-{
-    $stockOuts = StockOut::with('item', 'user')->get();
+    {
+        $stockOuts = StockOut::with('item', 'user')->get();
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-    $spreadsheet = new Spreadsheet();
-    $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'STOCK OUT LIST');
+        $sheet->fromArray(['Date', 'Item', 'Quantity', 'Destination', 'User'], null, 'A2');
 
-    // Set Header
-    $sheet->setCellValue('A1', 'Date');
-    $sheet->setCellValue('B1', 'Item');
-    $sheet->setCellValue('C1', 'Quantity');
-    $sheet->setCellValue('D1', 'Destination');
-    $sheet->setCellValue('E1', 'User');
+        $row = 3;
+        foreach ($stockOuts as $stockOut) {
+            $sheet->setCellValue("A{$row}", $stockOut->date);
+            $sheet->setCellValue("B{$row}", $stockOut->item->name);
+            $sheet->setCellValue("C{$row}", $stockOut->quantity);
+            $sheet->setCellValue("D{$row}", $stockOut->outgoing_destination);
+            $sheet->setCellValue("E{$row}", $stockOut->user->username);
+            $row++;
+        }
 
-    // Isi Data
-    $row = 2;
-    foreach ($stockOuts as $stockOut) {
-        $sheet->setCellValue('A' . $row, $stockOut->date);
-        $sheet->setCellValue('B' . $row, $stockOut->item->name);
-        $sheet->setCellValue('C' . $row, $stockOut->quantity);
-        $sheet->setCellValue('D' . $row, $stockOut->outgoing_destination);
-        $sheet->setCellValue('E' . $row, $stockOut->user->username);
-        $row++;
+        $this->styleSheet($sheet, 'E', $row - 1);
+        return $this->downloadSheet($spreadsheet, 'stock_outs.xlsx');
     }
-
-    $writer = new Xlsx($spreadsheet);
-    $fileName = 'stock_outs.xlsx';
-
-    // Simpan file sementara
-    $filePath = storage_path('app/public/' . $fileName);
-    $writer->save($filePath);
-
-    // Download dan hapus setelah terkirim
-    return response()->download($filePath)->deleteFileAfterSend(true);
-}
 }

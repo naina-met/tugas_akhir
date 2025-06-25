@@ -2,13 +2,6 @@
     <!-- Navbar -->
     <nav class="bg-[#f5f7f7] text-white shadow mb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <!-- Logo -->
-            <div class="flex items-center space-x-4">
-                <a href="{{ route('dashboard') }}">
-                    <img src="/forpic.img/logocm.png" alt="Logo" class="h-20">
-                </a>
-            </div>
-
             <!-- User -->
             <div class="text-sm text-[#002147] font-semibold">
                 {{ Auth::user()->name }}
@@ -19,15 +12,14 @@
     <!-- Content -->
     <div class="min-h-screen bg-[#002147] py-10">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-
-            <!-- Title di luar form -->
+            <!-- Title -->
             <h2 class="text-3xl font-semibold text-white mb-6">
                 {{ isset($item) ? 'Edit Item' : 'Add Item' }}
             </h2>
 
             <!-- Form box -->
             <div class="bg-white shadow rounded-lg border-2 border-[#002147] p-8">
-                <form method="POST" action="{{ isset($item) ? route('items.update', $item) : route('items.store') }}">
+                <form method="POST" action="{{ isset($item) ? route('items.update', $item) : route('items.store') }}" id="itemForm">
                     @csrf
                     @if (isset($item))
                         @method('PUT')
@@ -90,7 +82,7 @@
 
                     <!-- Submit Button -->
                     <div>
-                        <button type="submit" class="bg-[#ff5c10] hover:bg-[#a6240d] text-white px-5 py-2 rounded shadow transition">
+                        <button type="submit" id="submitBtn" class="bg-[#ff5c10] hover:bg-[#a6240d] text-white px-5 py-2 rounded shadow transition">
                             {{ isset($item) ? 'Update' : 'Save' }}
                         </button>
                     </div>
@@ -98,4 +90,17 @@
             </div>
         </div>
     </div>
+
+    <!-- Disable Button Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('itemForm');
+            const submitBtn = document.getElementById('submitBtn');
+
+            form.addEventListener('submit', function () {
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Processing...';
+            });
+        });
+    </script>
 </x-app-layout>

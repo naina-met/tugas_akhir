@@ -2,13 +2,7 @@
     <!-- Navbar -->
     <nav class="bg-[#f5f7f7] text-white shadow mb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <!-- Logo -->
-            <div class="flex items-center space-x-4">
-                <a href="{{ route('dashboard') }}">
-                    <img src="/forpic.img/logocm.png" alt="Logo" class="h-20">
-                </a>
-            </div>
-
+          
             <!-- User -->
             <div class="text-sm text-[#002147] font-semibold">
                 {{ Auth::user()->name }}
