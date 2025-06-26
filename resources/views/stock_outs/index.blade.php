@@ -28,7 +28,7 @@
             @endif
 
             <!-- Table -->
-            <div class="bg-white shadow rounded-lg border-2 border-[#002147]">
+            <div class="bg-white shadow rounded-lg border-2 border-[#002147] overflow-hidden">
                 <table class="w-full text-left border-collapse border-b-2 border-[#002147]">
                     <thead class="bg-[#ff5c10] text-white border-b-2 border-[#002147]">
                         <tr>

@@ -2,7 +2,6 @@
     <!-- Navbar -->
     <nav class="bg-[#f5f7f7] text-white shadow mb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-          
             <!-- User -->
             <div class="text-sm text-[#002147] font-semibold">
                 {{ Auth::user()->name }}
@@ -26,54 +25,61 @@
             @if (session('success'))
                 <div class="mb-4 text-green-500 font-medium">{{ session('success') }}</div>
             @endif
-<!-- Table -->
-<div class="bg-white shadow rounded-lg border border-[#002147] overflow-hidden">
-    <table class="w-full text-left border-collapse">
-        <thead class="bg-[#ff5c10] text-white">
-            <tr>
-                <th class="px-6 py-3 text-sm font-semibold border-b border-r border-[#002147]">#</th>
-                <th class="px-6 py-3 text-sm font-semibold border-b border-r border-[#002147]">Name</th>
-                <th class="px-6 py-3 text-sm font-semibold border-b border-r border-[#002147]">Code</th>
-                <th class="px-6 py-3 text-sm font-semibold border-b border-r border-[#002147]">Category</th>
-                <th class="px-6 py-3 text-sm font-semibold border-b border-r border-[#002147]">Stock</th>
-                <th class="px-6 py-3 text-sm font-semibold border-b border-r border-[#002147]">Unit</th>
-                <th class="px-6 py-3 text-sm font-semibold border-b border-[#002147]">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="text-[#002147]">
-            @forelse ($items as $index => $item)
-                <tr class="hover:bg-[#f5f7f7] transition border-b border-[#002147]">
-                    <td class="px-6 py-4 border-r border-[#002147]">{{ $index + 1 }}</td>
-                    <td class="px-6 py-4 border-r border-[#002147]">{{ $item->name }}</td>
-                    <td class="px-6 py-4 border-r border-[#002147]">{{ $item->code }}</td>
-                    <td class="px-6 py-4 border-r border-[#002147]">{{ $item->category->name }}</td>
-                    <td class="px-6 py-4 border-r border-[#002147]">{{ $item->stock }}</td>
-                    <td class="px-6 py-4 border-r border-[#002147]">{{ $item->unit }}</td>
-                    <td class="px-6 py-4 border-r border-[#002147]">
-                        <div class="flex gap-2">
-                            <a href="{{ route('items.edit', $item) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">Edit</a>
-                            <form action="{{ route('items.destroy', $item) }}" method="POST" onsubmit="return confirm('Are you sure?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="7" class="text-center px-6 py-8 text-gray-500">No items found.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
 
-    @if ($items->hasPages())
-        <div class="border-t border-[#002147] px-6 py-4">
-            {{ $items->links() }}
+            <!-- Table -->
+            <div class="bg-white shadow rounded-lg border-2 border-[#002147] overflow-hidden">
+                <table class="w-full text-left border-collapse border-spacing-0">
+                    <thead class="bg-[#ff5c10] text-white">
+                        <tr>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">#</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Name</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Code</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Category</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Stock</th>
+                            <th class="px-6 py-3 text-sm font-semibold border-r-2 border-[#002147]">Unit</th>
+                            <th class="px-6 py-3 text-sm font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-[#002147]">
+                        @forelse ($items as $index => $item)
+                            <tr class="border-t-2 border-[#002147] hover:bg-[#f0f4f8] transition">
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $index + 1 }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $item->name }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $item->code }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $item->category->name }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $item->stock }}</td>
+                                <td class="px-6 py-4 border-r-2 border-[#002147]">{{ $item->unit }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex gap-2">
+                                        <a href="{{ route('items.edit', $item) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                                            Edit
+                                        </a>
+                                        <form action="{{ route('items.destroy', $item) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="text-center px-6 py-8 text-gray-500">No items found.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+                @if ($items->hasPages())
+                    <div class="border-t-2 border-[#002147] px-6 py-4">
+                        {{ $items->links() }}
+                    </div>
+                @endif
+            </div>
         </div>
-    @endif
-</div>
+    </div>
 
     <!-- Confirm Export Script -->
     <script>
