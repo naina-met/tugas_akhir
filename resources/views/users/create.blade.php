@@ -2,7 +2,6 @@
     <!-- Navbar -->
     <nav class="bg-[#f5f7f7] text-white shadow mb-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <!-- User -->
             <div class="text-sm text-[#002147] font-semibold">
                 {{ Auth::user()->name }}
             </div>
@@ -12,7 +11,6 @@
     <!-- Content -->
     <div class="min-h-screen bg-[#002147] py-10">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <!-- Title -->
             <h2 class="text-2xl font-semibold text-white mb-6">Add Admin Account</h2>
 
             <!-- Error Alert -->
@@ -40,14 +38,32 @@
                     <input type="email" name="email" class="w-full border rounded px-3 py-2" required>
                 </div>
 
+                <!-- Password -->
                 <div>
                     <label class="block text-sm font-medium text-[#002147] mb-1">Password</label>
-                    <input type="password" name="password" class="w-full border rounded px-3 py-2" required>
+                    <div class="relative">
+                        <input type="password" name="password" id="password" class="w-full border rounded px-3 py-2 pr-10" required>
+                        <button type="button" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500" onclick="togglePassword('password', this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path id="eye-path-password" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
+                <!-- Confirm Password -->
                 <div>
                     <label class="block text-sm font-medium text-[#002147] mb-1">Confirm Password</label>
-                    <input type="password" name="password_confirmation" class="w-full border rounded px-3 py-2" required>
+                    <div class="relative">
+                        <input type="password" name="password_confirmation" id="password_confirmation" class="w-full border rounded px-3 py-2 pr-10" required>
+                        <button type="button" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500" onclick="togglePassword('password_confirmation', this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 eye-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path id="eye-path-confirm" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Buttons -->
@@ -74,5 +90,18 @@
                 submitBtn.innerText = 'Saving...';
             });
         });
+
+        function togglePassword(fieldId, button) {
+            const field = document.getElementById(fieldId);
+            const icon = button.querySelector('svg');
+
+            if (field.type === 'password') {
+                field.type = 'text';
+                icon.classList.add('text-blue-600');
+            } else {
+                field.type = 'password';
+                icon.classList.remove('text-blue-600');
+            }
+        }
     </script>
 </x-app-layout>
