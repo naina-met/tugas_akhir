@@ -83,7 +83,7 @@ Out:   {{ json_encode($stockOutCounts) }}
         });
     </script>
 
-    <!-- Chart.js -->
+    Chart.js
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
